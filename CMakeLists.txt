@@ -12,7 +12,7 @@ else()
 endif()
 
 add_executable(${PROJECT_NAME}
-	./src/Main.cpp
+	./src/main.cpp
 	./src/Core/BasicMain.cpp
 	./src/Platform/OpenGL/Window.cpp
 	./src/Platform/OpenGL/Main.cpp
