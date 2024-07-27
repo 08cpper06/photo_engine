@@ -13,14 +13,17 @@ class TBasicMain
 public:
 	virtual ~TBasicMain() = default;
 
-	static std::unique_ptr<TBasicMain> CreateMain(EExecuteType Type);
+	static TBasicMain* Get();
 	
 	virtual std::shared_ptr<TBasicWindow> CreateWindow(int Width, int Height) = 0;
 
-	virtual bool Init() = 0;
+	static bool Init(EExecuteType Type);
+	virtual bool Init();
 	virtual void MainLoop() = 0;
-	virtual void Terminate() = 0;
+	virtual void Terminate();
+	void Update();
 
 protected:
+	inline static std::unique_ptr<TBasicMain> Instance = nullptr;
 	std::vector<std::shared_ptr<TBasicWindow>> WindowList;
 };

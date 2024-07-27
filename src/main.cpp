@@ -3,21 +3,25 @@
 
 int main() {
 
-	std::unique_ptr<TBasicMain> Main = TBasicMain::CreateMain(EExecuteType::OpenGL);
-	if (!Main || !Main->Init())
+	if (!TBasicMain::Init(EExecuteType::OpenGL))
 	{
 		return 1;
 	}
 
-	std::shared_ptr<TBasicWindow> Window = Main->CreateWindow(600, 400);
+	std::shared_ptr<TBasicWindow> Window = TBasicMain::Get()->CreateWindow(600, 400);
 	if (!Window)
 	{
-		Main->Terminate();
+		TBasicMain::Get()->Terminate();
+	}
+	std::shared_ptr<TBasicWindow> Window2 = TBasicMain::Get()->CreateWindow(600, 400);
+	if (!Window2)
+	{
+		TBasicMain::Get()->Terminate();
 	}
 
-	Main->MainLoop();
+	TBasicMain::Get()->MainLoop();
 
-	Main->Terminate();
+	TBasicMain::Get()->Terminate();
 
 	return 0;
 }

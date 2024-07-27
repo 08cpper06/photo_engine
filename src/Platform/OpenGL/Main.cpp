@@ -18,6 +18,7 @@ std::shared_ptr<TBasicWindow> TOpenGLMain::CreateWindow(int Width, int Height)
 
 bool TOpenGLMain::Init()
 {
+	TBasicMain::Init();
 	glfwSetErrorCallback(error_callback);
 	return glfwInit();
 }
@@ -27,6 +28,7 @@ void TOpenGLMain::MainLoop()
 	int Index;
 	while (WindowList.size())
 	{
+		Update();
 		Index = 0;
 		for (auto Itr = WindowList.begin(); Itr != WindowList.end(); ++Itr)
 		{
@@ -47,4 +49,5 @@ void TOpenGLMain::MainLoop()
 void TOpenGLMain::Terminate()
 {
 	glfwTerminate();
+	TBasicMain::Terminate();
 }

@@ -3,11 +3,34 @@
 
 
 
-std::unique_ptr<TBasicMain> TBasicMain::CreateMain(EExecuteType Type)
+TBasicMain* TBasicMain::Get()
+{
+	return Instance.get();
+}
+
+bool TBasicMain::Init(EExecuteType Type)
 {
 	switch (Type) {
-	case EExecuteType::OpenGL: return std::make_unique<TOpenGLMain>();
-	case EExecuteType::Native: return nullptr;
+	case EExecuteType::OpenGL:
+		Instance = std::make_unique<TOpenGLMain>();
+		return Instance->Init();
+	case EExecuteType::Native:
+		return false;
 	}
-	return nullptr;
+	return false;
+}
+
+bool TBasicMain::Init()
+{
+	return true;
+}
+
+void TBasicMain::Update()
+{
+	;
+}
+
+void TBasicMain::Terminate()
+{
+	;
 }
