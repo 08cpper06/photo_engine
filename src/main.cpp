@@ -1,33 +1,23 @@
-#include <iostream>
-#include <GLFW/glfw3.h>
-
-
-void error_callback(int error, const char* desc) {
-	std::cout << "E" << error << ": " << desc << std::endl;
-}
+#include "Core/BasicMain.hpp"
 
 
 int main() {
-	glfwSetErrorCallback(error_callback);
 
-	if (!glfwInit()) {
+	std::unique_ptr<TBasicMain> Main = TBasicMain::CreateMain(EExecuteType::OpenGL);
+	if (!Main || !Main->Init())
+	{
 		return 1;
 	}
 
-	GLFWwindow* window;
-	window = glfwCreateWindow(600, 400, "Preview", nullptr, nullptr);
-	if (!window) {
-		glfwTerminate();
+	std::shared_ptr<TBasicWindow> Window = Main->CreateWindow(600, 400);
+	if (!Window)
+	{
+		Main->Terminate();
 	}
 
-	glfwMakeContextCurrent(window);
+	Main->MainLoop();
 
-	while (!glfwWindowShouldClose(window)) {
-		glfwPollEvents();
-	}
-	glfwDestroyWindow(window);
-
-	glfwTerminate();
+	Main->Terminate();
 
 	return 0;
 }

@@ -12,7 +12,10 @@ else()
 endif()
 
 add_executable(${PROJECT_NAME}
-	./src/main.cpp
+	./src/Main.cpp
+	./src/Core/BasicMain.cpp
+	./src/Platform/OpenGL/Window.cpp
+	./src/Platform/OpenGL/Main.cpp
 )
 
 target_link_directories(${PROJECT_NAME} PUBLIC ${GLFW3_DIR}/lib)
