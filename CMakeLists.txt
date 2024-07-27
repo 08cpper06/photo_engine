@@ -15,4 +15,8 @@ add_executable(${PROJECT_NAME}
 	./src/main.cpp
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC ./include)
+target_link_directories(${PROJECT_NAME} PUBLIC ${GLFW3_DIR}/lib)
+target_link_libraries(${PROJECT_NAME} glfw3)
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${GLFW3_DIR}/include)
+target_include_directories(${PROJECT_NAME} PUBLIC include)
