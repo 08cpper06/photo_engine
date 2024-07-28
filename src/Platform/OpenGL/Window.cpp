@@ -1,4 +1,5 @@
 #include "Platform/OpenGL/Window.hpp"
+#include "Core/ThreadManager.hpp"
 
 
 TOpenGLWindow::TOpenGLWindow(GLFWwindow* Window) :
@@ -36,14 +37,24 @@ void TOpenGLWindow::SetSize(int Width, int Height) const
 
 void TOpenGLWindow::Update()
 {
-	glfwMakeContextCurrent(Window);
 	if (!glfwWindowShouldClose(Window))
 	{
 		glfwPollEvents();
+		ThreadManager::Get()->TaskNew(TAsyncTask([this](){
+			GetNativeHandle([this](void* Window){
+				glfwMakeContextCurrent(static_cast<GLFWwindow*>(Window));
+				glClearColor(1.f, 1.f, 1.f, 1.f);
+				glfwMakeContextCurrent(nullptr);
+			});	
+		}, EExecuteThreadType::RenderThread));
 	}
 	else
 	{
-		glfwDestroyWindow(Window);
+		{
+			std::lock_guard<std::mutex> locker(HandleLocker);
+			glfwDestroyWindow(static_cast<GLFWwindow*>(Window));
+			Window = nullptr;
+		}
 		Status = EWindowStatus::Closed;
 	}
 }
@@ -53,7 +64,8 @@ std::shared_ptr<TBasicRenderer> TOpenGLWindow::GetRenderer() const
 	return nullptr;
 }
 
-void* TOpenGLWindow::GetNativeHandle() const
+void TOpenGLWindow::GetNativeHandle(std::function<void(void*)>&& InGetter)
 {
-	return reinterpret_cast<void*>(Window);
+	std::lock_guard<std::mutex> locker(HandleLocker);
+	InGetter(Window);
 }

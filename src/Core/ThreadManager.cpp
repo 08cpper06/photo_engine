@@ -12,15 +12,11 @@ ThreadManager* ThreadManager::Get()
 	return &Instance;
 }
 
-bool ThreadManager::Init(int InThreadCount)
+void ThreadManager::AddNewThread(EExecuteThreadType InType)
 {
-	for (int Index = 0; Index < InThreadCount; ++Index)
-	{
-		Get()->ThreadPool.emplace_back([this]() {
-			this->InternalExecute();
-		});
-	}
-	return Get()->Init();
+	ThreadPool.emplace_back([this, InType]() {
+		this->InternalExecute(InType);
+	});
 }
 
 bool ThreadManager::Init()
@@ -42,7 +38,7 @@ void ThreadManager::Terminate()
 	ThreadPool.clear();
 }
 
-void ThreadManager::InternalExecute()
+void ThreadManager::InternalExecute(EExecuteThreadType InType)
 {
 	while (!IsRequestEnd)
 	{
@@ -51,8 +47,25 @@ void ThreadManager::InternalExecute()
 			std::lock_guard<std::mutex> locker(TaskListLocker);
 			if (TaskList.size())
 			{
-				Task = std::move(TaskList.back());
-				TaskList.pop_back();
+				auto Itr = --TaskList.end();
+				for (;;)
+				{
+					if (Itr == TaskList.begin())
+					{
+						Itr = Itr->Type == InType ? Itr : TaskList.end();
+						break;
+					}
+					if (Itr->Type == InType)
+					{
+						break;
+					}
+					--Itr;
+				}
+				if (Itr != TaskList.end())
+				{
+					Task = std::move(*Itr);
+					TaskList.erase(Itr);
+				}
 			}
 		}
 		Task();

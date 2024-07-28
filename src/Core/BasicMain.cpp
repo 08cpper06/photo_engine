@@ -23,7 +23,13 @@ bool TBasicMain::Init(EExecuteType Type)
 
 bool TBasicMain::Init()
 {
-	ThreadManager::Get()->Init(std::thread::hardware_concurrency());
+	ThreadManager::Get()->Init();
+	ThreadManager::Get()->AddNewThread(EExecuteThreadType::RenderThread);
+	int Count = std::thread::hardware_concurrency();
+	for (; Count; --Count)
+	{
+		ThreadManager::Get()->AddNewThread(EExecuteThreadType::WorkderThread);
+	}
 	return true;
 }
 

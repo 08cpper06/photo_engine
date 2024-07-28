@@ -1,4 +1,5 @@
 #include "../../Core/BasicWindow.hpp"
+#include <mutex>
 #include <GLFW/glfw3.h>
 
 
@@ -19,8 +20,9 @@ public:
 
 	std::shared_ptr<TBasicRenderer> GetRenderer() const override;
 
-	void* GetNativeHandle() const;
+	void GetNativeHandle(std::function<void(void*)>&& InGetter);
 
 private:
+	std::mutex HandleLocker;
 	GLFWwindow* Window;
 };

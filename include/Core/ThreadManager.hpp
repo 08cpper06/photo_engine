@@ -6,13 +6,20 @@
 #include <functional>
 
 
+enum class EExecuteThreadType {
+	WorkderThread,
+	RenderThread,
+};
+
 struct TAsyncTask {
 	TAsyncTask()
 	{
 		Task = [](){};
+		Type = EExecuteThreadType::WorkderThread;
 	}
-	TAsyncTask(std::function<void(void)>&& InTask) :
-		Task(std::move(InTask))
+	TAsyncTask(std::function<void(void)>&& InTask, EExecuteThreadType Type) :
+		Task(std::move(InTask)),
+		Type(Type)
 	{}
 
 	void operator()() const
@@ -21,6 +28,7 @@ struct TAsyncTask {
 	}
 
 	std::function<void(void)> Task;
+	EExecuteThreadType Type;
 };
 
 class ThreadManager :
@@ -31,7 +39,7 @@ public:
 
 	static ThreadManager* Get();
 
-	bool Init(int InThreadCount);
+	void AddNewThread(EExecuteThreadType InType);
 
 	bool Init() override;
 	void Terminate() override;
@@ -39,7 +47,7 @@ public:
 	void TaskNew(TAsyncTask&& InTask);
 
 public:
-	void InternalExecute();
+	void InternalExecute(EExecuteThreadType InType);
 
 private:
 	std::atomic<bool> IsRequestEnd;

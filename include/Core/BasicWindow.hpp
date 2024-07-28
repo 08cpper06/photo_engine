@@ -1,6 +1,7 @@
 #pragma once
 #include <tuple>
 #include <memory>
+#include <functional>
 
 
 class TBasicRenderer;
@@ -30,7 +31,7 @@ public:
 
 	virtual std::shared_ptr<TBasicRenderer> GetRenderer() const = 0;
 
-	virtual void* GetNativeHandle() const = 0;
+	virtual void GetNativeHandle(std::function<void(void*)>&& InGetter) = 0;
 
 protected:
 	EWindowStatus Status;
