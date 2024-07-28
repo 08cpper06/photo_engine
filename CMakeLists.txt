@@ -14,6 +14,7 @@ endif()
 add_executable(${PROJECT_NAME}
 	./src/main.cpp
 	./src/Core/BasicMain.cpp
+	./src/Core/ThreadManager.cpp
 	./src/Platform/OpenGL/Window.cpp
 	./src/Platform/OpenGL/Main.cpp
 )

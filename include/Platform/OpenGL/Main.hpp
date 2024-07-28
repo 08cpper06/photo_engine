@@ -11,8 +11,8 @@ public:
 	
 	std::shared_ptr<TBasicWindow> CreateWindow(int Width, int Height);
 
-	bool Init();
-	void MainLoop();
-	void Terminate();
+	bool Init() override;
+	void MainLoop() override;
+	void Terminate() override;
 
 };

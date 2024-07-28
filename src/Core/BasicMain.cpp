@@ -1,4 +1,5 @@
 #include "Core/BasicMain.hpp"
+#include "Core/ThreadManager.hpp"
 #include "Platform/OpenGL/Main.hpp"
 
 
@@ -22,6 +23,7 @@ bool TBasicMain::Init(EExecuteType Type)
 
 bool TBasicMain::Init()
 {
+	ThreadManager::Get()->Init(std::thread::hardware_concurrency());
 	return true;
 }
 
@@ -32,5 +34,5 @@ void TBasicMain::Update()
 
 void TBasicMain::Terminate()
 {
-	;
+	ThreadManager::Get()->Terminate();
 }
