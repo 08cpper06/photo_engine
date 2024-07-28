@@ -24,6 +24,7 @@ public:
 	virtual bool Init() override;
 	virtual void MainLoop() = 0;
 	virtual void Terminate() override;
+	void Rendering();
 	void Update();
 
 protected:

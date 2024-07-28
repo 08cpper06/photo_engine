@@ -1,4 +1,6 @@
+#pragma once
 #include "../../Core/BasicWindow.hpp"
+#include "../../Platform/OpenGL/Renderer.hpp"
 #include <mutex>
 #include <GLFW/glfw3.h>
 
@@ -23,6 +25,8 @@ public:
 	void GetNativeHandle(std::function<void(void*)>&& InGetter);
 
 private:
+	friend class TOpenGLRenderer;
+	std::shared_ptr<TOpenGLRenderer> Renderer;
 	std::mutex HandleLocker;
 	GLFWwindow* Window;
 };

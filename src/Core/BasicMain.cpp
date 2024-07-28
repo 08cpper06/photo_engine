@@ -1,4 +1,5 @@
 #include "Core/BasicMain.hpp"
+#include "Core/BasicRenderer.hpp"
 #include "Core/ThreadManager.hpp"
 #include "Platform/OpenGL/Main.hpp"
 
@@ -24,13 +25,28 @@ bool TBasicMain::Init(EExecuteType Type)
 bool TBasicMain::Init()
 {
 	ThreadManager::Get()->Init();
-	ThreadManager::Get()->AddNewThread(EExecuteThreadType::RenderThread);
+	ThreadManager::Get()->AddNewThread(EExecuteThreadType::RenderThread, [this](EExecuteThreadType) {
+		while (!ThreadManager::Get()->IsRequestTerminate()) {
+			this->Rendering();
+			std::this_thread::yield();
+		}
+	});
 	int Count = std::thread::hardware_concurrency();
 	for (; Count; --Count)
 	{
-		ThreadManager::Get()->AddNewThread(EExecuteThreadType::WorkderThread);
+		ThreadManager::Get()->AddNewThread(EExecuteThreadType::WorkderThread, [](EExecuteThreadType Type) {
+			ThreadManager::Get()->InternalExecute(Type);
+		});
 	}
 	return true;
+}
+
+void TBasicMain::Rendering()
+{
+	for (std::shared_ptr<TBasicWindow>& Ptr : WindowList)
+	{
+		Ptr->GetRenderer()->Rendering();
+	}
 }
 
 void TBasicMain::Update()

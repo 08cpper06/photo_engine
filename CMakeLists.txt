@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME}
 	./src/Core/ThreadManager.cpp
 	./src/Platform/OpenGL/Window.cpp
 	./src/Platform/OpenGL/Main.cpp
+	./src/Platform/OpenGL/Renderer.cpp
 )
 
 target_link_directories(${PROJECT_NAME} PUBLIC ${GLFW3_DIR}/lib)

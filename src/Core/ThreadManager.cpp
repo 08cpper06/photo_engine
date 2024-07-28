@@ -12,11 +12,14 @@ ThreadManager* ThreadManager::Get()
 	return &Instance;
 }
 
-void ThreadManager::AddNewThread(EExecuteThreadType InType)
+void ThreadManager::AddNewThread(EExecuteThreadType InType, std::function<void(EExecuteThreadType)> InMain)
 {
-	ThreadPool.emplace_back([this, InType]() {
-		this->InternalExecute(InType);
-	});
+	ThreadPool.emplace_back([InType, InMain]() { InMain(InType); });
+}
+
+bool ThreadManager::IsRequestTerminate() const
+{
+	return IsRequestEnd;
 }
 
 bool ThreadManager::Init()

@@ -39,7 +39,9 @@ public:
 
 	static ThreadManager* Get();
 
-	void AddNewThread(EExecuteThreadType InType);
+	void AddNewThread(EExecuteThreadType InType, std::function<void(EExecuteThreadType)> InMain);
+
+	bool IsRequestTerminate() const;
 
 	bool Init() override;
 	void Terminate() override;

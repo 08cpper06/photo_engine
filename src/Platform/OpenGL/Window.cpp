@@ -4,7 +4,9 @@
 
 TOpenGLWindow::TOpenGLWindow(GLFWwindow* Window) :
 	Window(Window)
-{}
+{
+	Renderer = std::make_shared<TOpenGLRenderer>(this);
+}
 
 std::shared_ptr<TOpenGLWindow> TOpenGLWindow::CreateWindow(const std::pair<int, int>& Size) {
 	GLFWwindow* Window = glfwCreateWindow(Size.first, Size.second, "Preview", nullptr, nullptr);
@@ -40,13 +42,6 @@ void TOpenGLWindow::Update()
 	if (!glfwWindowShouldClose(Window))
 	{
 		glfwPollEvents();
-		ThreadManager::Get()->TaskNew(TAsyncTask([this](){
-			GetNativeHandle([this](void* Window){
-				glfwMakeContextCurrent(static_cast<GLFWwindow*>(Window));
-				glClearColor(1.f, 1.f, 1.f, 1.f);
-				glfwMakeContextCurrent(nullptr);
-			});	
-		}, EExecuteThreadType::RenderThread));
 	}
 	else
 	{
@@ -54,6 +49,7 @@ void TOpenGLWindow::Update()
 			std::lock_guard<std::mutex> locker(HandleLocker);
 			glfwDestroyWindow(static_cast<GLFWwindow*>(Window));
 			Window = nullptr;
+			Renderer = nullptr;
 		}
 		Status = EWindowStatus::Closed;
 	}
@@ -61,7 +57,7 @@ void TOpenGLWindow::Update()
 
 std::shared_ptr<TBasicRenderer> TOpenGLWindow::GetRenderer() const
 {
-	return nullptr;
+	return Renderer;
 }
 
 void TOpenGLWindow::GetNativeHandle(std::function<void(void*)>&& InGetter)
